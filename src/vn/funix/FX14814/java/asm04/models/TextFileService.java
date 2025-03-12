@@ -15,23 +15,7 @@ public class TextFileService {
         List<List<String>> records = new ArrayList<>();
 
         // Kiểm tra đường dẫn file
-        File file = new File(fileName);
-        System.out.println("Đang tìm file tại: " + file.getAbsolutePath());
-
-        // Nếu file không tồn tại ở đường dẫn hiện tại, thử tìm trong thư mục gốc
-        if (!file.exists() && !fileName.startsWith("store/")) {
-            file = new File("store/" + fileName);
-            System.out.println("Thử tìm file tại: " + file.getAbsolutePath());
-        }
-
-        // Nếu vẫn không tìm thấy file
-        if (!file.exists()) {
-            System.out.println("Lỗi: File không tồn tại.");
-            System.out.println("Vui lòng đảm bảo:");
-            System.out.println("1. File nằm trong thư mục 'store/'");
-            System.out.println("2. Tên file được nhập chính xác (ví dụ: customers.txt)");
-            return records;
-        }
+        File file = new File(Util.getFilePath(fileName));
 
         // Nếu không thể đọc file
         if (!file.canRead()) {

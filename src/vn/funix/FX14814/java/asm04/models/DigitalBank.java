@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import vn.funix.FX14814.java.asm04.dao.AccountDao;
 import vn.funix.FX14814.java.asm04.dao.CustomerDao;
+import vn.funix.FX14814.java.asm04.exception.CustomerIdNotValidException;
 
 public class DigitalBank extends Bank {
 
@@ -31,21 +32,27 @@ public class DigitalBank extends Bank {
 
 		for (List<String> record : records) {
 			if (record.size() >= 2) {
-				Customer newCustomer = new Customer(record);
-				if (isValidCustomerId(newCustomer.getCustomerId())) {
-					if (!isCustomerExisted(existingCustomers, newCustomer)) {
-						existingCustomers.add(newCustomer);
-						System.out.println("Đã thêm khách hàng " + newCustomer.getCustomerId() + " vào danh sách");
+				try {
+					Customer newCustomer = new Customer(record);
+					if (isValidCustomerId(newCustomer.getCustomerId())) {
+						if (!isCustomerExisted(existingCustomers, newCustomer)) {
+							existingCustomers.add(newCustomer);
+							System.out.println("Đã thêm khách hàng " + newCustomer.getCustomerId() + " vào danh sách");
+						} else {
+							System.out.println(
+									"Khách hàng " + newCustomer.getCustomerId() + " đã tồn tại trong danh sách");
+						}
 					} else {
-						System.out.println("Khách hàng " + newCustomer.getCustomerId() + " đã tồn tại trong danh sách");
+						System.out.println("Mã số " + newCustomer.getCustomerId() + " không hợp lệ");
 					}
-				} else {
-					System.out.println("Mã số " + newCustomer.getCustomerId() + " không hợp lệ");
+				} catch (CustomerIdNotValidException e) {
+					System.out.println(e.getMessage());
 				}
 			}
 		}
 
 		CustomerDao.save(existingCustomers);
+
 	}
 
 	public void addSavingAccount(Scanner scanner, String customerId) {

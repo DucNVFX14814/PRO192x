@@ -10,27 +10,17 @@ import vn.funix.FX14814.java.asm04.dao.AccountDao;
 public class Customer extends User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String customerId;
-	private String name;
-
+	// Constructor mặc định cần thiết cho Serialization/Deserialization
+	public Customer() {
+		super();
+	}
+	
 	public Customer(String customerId, String name) {
-		super(customerId, name);
+		super(name, customerId);
 	}
 
 	public Customer(List<String> values) {
 		super(values.get(0), values.get(1));
-	}
-
-	public String getCustomerId() {
-		return customerId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public List<Account> getAccounts() {

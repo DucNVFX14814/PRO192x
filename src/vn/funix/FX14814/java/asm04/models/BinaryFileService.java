@@ -13,7 +13,9 @@ public class BinaryFileService {
 				try {
 					@SuppressWarnings("unchecked")
 					T object = (T) file.readObject();
-					objects.add(object);
+					if (object != null) {
+						objects.add(object);
+					}
 				} catch (EOFException e) {
 					eof = true;
 				}
@@ -32,7 +34,9 @@ public class BinaryFileService {
 	public static <T> void writeFile(String fileName, List<T> objects) {
 		try (ObjectOutputStream file = new ObjectOutputStream(
 				new BufferedOutputStream(new FileOutputStream(fileName)))) {
-			file.writeObject(objects);
+			for (T object : objects) {
+				file.writeObject(object);
+			}
 		} catch (IOException e) {
 			System.out.println("IO Exception: " + e.getMessage());
 		}
