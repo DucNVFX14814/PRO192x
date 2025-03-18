@@ -10,13 +10,12 @@ import vn.funix.FX14814.java.asm04.dao.AccountDao;
 public class Customer extends User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	// Constructor mặc định cần thiết cho Serialization/Deserialization
 	public Customer() {
 		super();
 	}
-	
+
 	public Customer(String customerId, String name) {
-		super(name, customerId);
+		super(customerId, name);
 	}
 
 	public Customer(List<String> values) {
@@ -33,17 +32,50 @@ public class Customer extends User implements Serializable {
 				.orElse(null);
 	}
 
+	public boolean isPremiumCustomer(List<Account> accounts) {
+		if (accounts.isEmpty()) {
+			accounts = getAccounts();
+		}
+
+		for (Account acc : accounts) {
+			if (acc.isPremiumAccount()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public double getBalance(List<Account> accounts) {
+		if (accounts.isEmpty()) {
+			accounts = getAccounts();
+		}
+
+		double sumBalance = 0;
+		for (Account acc : accounts) {
+			sumBalance += acc.getBalance();
+		}
+
+		return sumBalance;
+	}
+
 	public void displayInformation() {
-		System.out.printf("%s | %s | %d tài khoản\n", customerId, name, getAccounts().size());
-		for (Account account : getAccounts()) {
-			System.out.printf("%s | %,.0f đ\n", account.getAccountNumber(), account.getBalance());
+		List<Account> accounts = getAccounts();
+		String formattedStr = String.format("%-12s | %-20s | %-7s | %14sđ", getCustomerId(), getName(),
+				(isPremiumCustomer(accounts) ? "Premium" : "Normal"), Util.formatAmount(getBalance(accounts)));
+		System.out.println(formattedStr);
+
+		int count = 0;
+		for (Account acc : accounts) {
+			count++;
+			System.out.printf("%-5d %s\n", count, acc);
 		}
 	}
 
 	public void withdraw(Scanner scanner) {
-		List<Account> accounts = getAccounts();
 		Account account;
 		double amount;
+		List<Account> accounts = getAccounts();
 		if (accounts.isEmpty()) {
 			System.out.println("Khách hàng chưa có tài khoản nào, thao tác không thành công");
 			return;
@@ -51,18 +83,29 @@ public class Customer extends User implements Serializable {
 
 		while (true) {
 			System.out.print("Nhập số tài khoản: ");
-			account = getAccountByAccountNumber(accounts, scanner.nextLine());
+			String accountNumber = scanner.nextLine();
+
+			if (accountNumber.equalsIgnoreCase("ex") || accountNumber.equalsIgnoreCase("exit"))
+				return;
+
+			account = getAccountByAccountNumber(accounts, accountNumber);
+
 			if (account != null) {
 				break;
 			} else {
-				System.out.println("Số tài khoản không tồn tại!\nNhập lại số tài khoản: ");
+				System.out.println("Số tài khoản không tồn tại!%nNhập lại số tài khoản: ");
 			}
 		}
 
 		while (true) {
 			try {
 				System.out.print("Nhập số tiền rút: ");
-				amount = Double.parseDouble(scanner.nextLine());
+				String answer = scanner.nextLine();
+				if (answer.equalsIgnoreCase("ex") || answer.equalsIgnoreCase("exit"))
+					return;
+
+				amount = Double.parseDouble(answer);
+				
 				if (amount > 0) {
 					break;
 				} else {
@@ -87,6 +130,10 @@ public class Customer extends User implements Serializable {
 
 		System.out.print("Nhập STK chuyển: ");
 		String fromAccountNumber = scanner.nextLine();
+
+		if (fromAccountNumber.equalsIgnoreCase("ex") || fromAccountNumber.equalsIgnoreCase("exit"))
+			return;
+
 		Account fromAccount = accounts.stream().filter(acc -> acc.getAccountNumber().equals(fromAccountNumber))
 				.findFirst().orElse(null);
 
@@ -97,6 +144,10 @@ public class Customer extends User implements Serializable {
 
 		System.out.print("Nhập STK nhận: ");
 		String toAccountNumber = scanner.nextLine();
+
+		if (toAccountNumber.equalsIgnoreCase("ex") || toAccountNumber.equalsIgnoreCase("exit"))
+			return;
+
 		Account toAccount = AccountDao.list().stream().filter(acc -> acc.getAccountNumber().equals(toAccountNumber))
 				.findFirst().orElse(null);
 
@@ -111,9 +162,13 @@ public class Customer extends User implements Serializable {
 		}
 
 		if (fromAccount instanceof SavingsAccount) {
-			System.out.print("Nhập số tiền: ");
+			System.out.print("Nhập số tiền chuyển: ");
 			try {
-				double amount = Double.parseDouble(scanner.nextLine());
+				String answer = scanner.nextLine();
+				if (answer.equalsIgnoreCase("ex") || answer.equalsIgnoreCase("exit"))
+					return;
+
+				double amount = Double.parseDouble(answer);
 				((SavingsAccount) fromAccount).transfers(toAccount, amount);
 			} catch (NumberFormatException e) {
 				System.out.println("Số tiền không hợp lệ!");
@@ -122,11 +177,18 @@ public class Customer extends User implements Serializable {
 	}
 
 	public void displayTransactionInformation() {
-		System.out.printf("%s | %s | %d tài khoản\n", customerId, name, getAccounts().size());
+		System.out.printf("%n%-12s | %-10s | %-17s | %-19s | %s%n", "Account", "Type", "Amount", "Time", "Transaction ID");
 		for (Account account : getAccounts()) {
 			if (account instanceof SavingsAccount) {
 				((SavingsAccount) account).displayTransactionsList();
+//			} else if (account instanceof LoansAccount) {
+//				((LoansAccount) account).displayTransactions();
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Customer {name = %s, customerId = %s}", name, customerId);
 	}
 }

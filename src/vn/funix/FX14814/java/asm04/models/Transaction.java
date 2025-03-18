@@ -1,8 +1,6 @@
 package vn.funix.FX14814.java.asm04.models;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 public class Transaction implements Serializable {
@@ -50,9 +48,7 @@ public class Transaction implements Serializable {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat formatter = new SimpleDateFormat(Util.DATE_FORMAT);
-		String sign = (type == TransactionType.WITHDRAW || type == TransactionType.TRANSFER) ? "-" : "+";
-		return String.format("[GD] %s | %s | %s%,.0f đ | %s", formatter.format(new Date()), accountNumber, sign, amount,
-				type.getDescription());
+		return String.format("%-5s %6s | %-10s | %16sđ | %19s | %s", "[GD]", accountNumber, type,
+				Util.formatAmount(amount), time, id);
 	}
 }

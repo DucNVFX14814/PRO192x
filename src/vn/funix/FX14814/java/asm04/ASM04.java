@@ -82,28 +82,28 @@ public class ASM04 {
 
 	// 3. Thêm tài khoản ATM
 	private static void addAccount() {
-		System.out.print("Nhap ma so khach hang: ");
+		System.out.print("Nhập mã số khách hàng: ");
 		String customerId = scanner.nextLine();
 		activeBank.addSavingAccount(scanner, customerId);
 	}
 
 	// 4. Chuyển tiền
 	private static void transfer() {
-		System.out.print("Nhap ma so khach hang: ");
+		System.out.print("Nhập mã số khách hàng: ");
 		String customerId = scanner.nextLine();
 		activeBank.transfers(scanner, customerId);
 	}
 
 	// 5. Rút tiền
 	private static void withdraw() {
-		System.out.print("Nhap ma so khach hang: ");
+		System.out.print("Nhập mã số khách hàng: ");
 		String customerId = scanner.nextLine();
 		activeBank.withdraw(scanner, customerId);
 	}
 
 	// 6. Tra cứu lịch sử giao dịch
 	private static void displayTransactionsHistory() {
-		System.out.print("Nhap ma so khach hang: ");
+		System.out.print("Nhập mã số khách hàng: ");
 		String customerId = scanner.nextLine();
 		activeBank.displayTransactionInformation(customerId);
 	}

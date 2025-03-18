@@ -54,7 +54,6 @@ public abstract class Account implements Serializable {
 
 	public void displayTransactionsList() {
 		List<Transaction> transactions = getTransactions();
-		System.out.println("Lich su giao dich:");
 		for (Transaction transaction : transactions) {
 			System.out.println(transaction);
 		}
@@ -72,5 +71,5 @@ public abstract class Account implements Serializable {
 		return balance >= MIN_PREMIUM_BALANCE;
 	}
 
-	public abstract void input(Scanner scanner);
+	public abstract boolean input(Scanner scanner);
 }

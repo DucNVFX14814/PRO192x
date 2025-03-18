@@ -1,10 +1,5 @@
 package vn.funix.FX14814.java.asm04.models;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 public class JUnitTest {
 
 //	private SavingsAccount savingsAccount;

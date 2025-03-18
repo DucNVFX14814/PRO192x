@@ -56,7 +56,7 @@ public class Lab {
 
 //		lab15_1();
 //		lab15_2();
-//		lab15_3();
+		lab15_3();
 
 //		lab16_1();
 //		lab16_2();
@@ -68,7 +68,7 @@ public class Lab {
 //		lab18_3();
 //		lab18_4();
 //		lab18_5();
-		lab18_6();
+//		lab18_6();
 	}
 
 	private static void lab18_6() {

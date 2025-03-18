@@ -9,6 +9,7 @@ public class Util {
 
 	// Danh sách mã tỉnh và tên tỉnh
 	private static final ArrayList<String[]> provinceList = innitProvinceList();
+	public static final String DATE_FORMAT = "";
 
 	// Hàm xác thực CCCD
 	public static boolean isValidCCCD(String cccd) {

@@ -19,7 +19,7 @@ public class TextFileService {
 
         // Nếu không thể đọc file
         if (!file.canRead()) {
-            System.out.println("Lỗi: Không thể đọc file '" + file.getName() + "'");
+            System.out.println("Lỗi: Không thể đọc file '" + file.getName() + "' hoặc file không tồn tại!");
             return records;
         }
 

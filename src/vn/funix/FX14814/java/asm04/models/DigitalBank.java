@@ -1,5 +1,7 @@
 package vn.funix.FX14814.java.asm04.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,6 +30,9 @@ public class DigitalBank extends Bank {
 
 	public void addCustomers(String fileName) {
 		List<List<String>> records = TextFileService.readFile(fileName);
+		if (records.isEmpty())
+			return;
+
 		List<Customer> existingCustomers = CustomerDao.list();
 
 		for (List<String> record : records) {
@@ -37,10 +42,11 @@ public class DigitalBank extends Bank {
 					if (isValidCustomerId(newCustomer.getCustomerId())) {
 						if (!isCustomerExisted(existingCustomers, newCustomer)) {
 							existingCustomers.add(newCustomer);
-							System.out.println("Đã thêm khách hàng " + newCustomer.getCustomerId() + " vào danh sách");
-						} else {
 							System.out.println(
-									"Khách hàng " + newCustomer.getCustomerId() + " đã tồn tại trong danh sách");
+									"Đã thêm khách hàng " + newCustomer.getCustomerId() + " vào danh sách khách hàng");
+						} else {
+							System.out.println("Khách hàng " + newCustomer.getCustomerId()
+									+ " đã tồn tại trong danh sách, thêm khách hàng không thành công");
 						}
 					} else {
 						System.out.println("Mã số " + newCustomer.getCustomerId() + " không hợp lệ");
@@ -52,7 +58,6 @@ public class DigitalBank extends Bank {
 		}
 
 		CustomerDao.save(existingCustomers);
-
 	}
 
 	public void addSavingAccount(Scanner scanner, String customerId) {
@@ -66,11 +71,19 @@ public class DigitalBank extends Bank {
 
 		List<Account> accounts = AccountDao.list();
 		SavingsAccount newAccount = new SavingsAccount("", 0, customerId);
-		newAccount.input(scanner);
+
+		if (!newAccount.input(scanner)) {
+			System.out.println("Thêm tài khoản thất bại!");
+			return;
+		}
 
 		if (!isAccountExisted(accounts, newAccount)) {
 			accounts.add(newAccount);
 			AccountDao.save(accounts);
+			
+			newAccount.createTransaction(newAccount.getBalance(),
+					new SimpleDateFormat(Util.DATE_FORMAT).format(new Date()), true, TransactionType.DEPOSIT);
+			
 			System.out.println("Thêm tài khoản thành công!");
 		} else {
 			System.out.println("Số tài khoản đã tồn tại!");
@@ -86,6 +99,8 @@ public class DigitalBank extends Bank {
 			return;
 		}
 
+		customer.displayInformation();
+
 		customer.withdraw(scanner);
 	}
 
@@ -97,6 +112,8 @@ public class DigitalBank extends Bank {
 			System.out.println("Khách hàng " + customerId + " không tồn tại!");
 			return;
 		}
+
+		customer.displayInformation();
 
 		customer.transfers(scanner);
 	}
@@ -110,6 +127,8 @@ public class DigitalBank extends Bank {
 			return;
 		}
 
+		customer.displayInformation();
+
 		customer.displayTransactionInformation();
 	}
 
@@ -118,14 +137,14 @@ public class DigitalBank extends Bank {
 	}
 
 	private boolean isCustomerExisted(List<Customer> customers, Customer newCustomer) {
-		return customers.stream().anyMatch(c -> c.getCustomerId().equals(newCustomer.getCustomerId()));
+		return customers.stream().anyMatch(cus -> cus.getCustomerId().equals(newCustomer.getCustomerId()));
 	}
 
 	private boolean isAccountExisted(List<Account> accounts, Account newAccount) {
-		return accounts.stream().anyMatch(a -> a.getAccountNumber().equals(newAccount.getAccountNumber()));
+		return accounts.stream().anyMatch(acc -> acc.getAccountNumber().equals(newAccount.getAccountNumber()));
 	}
 
 	private Customer getCustomerById(List<Customer> customers, String customerId) {
-		return customers.stream().filter(c -> c.getCustomerId().equals(customerId)).findFirst().orElse(null);
+		return customers.stream().filter(cus -> cus.getCustomerId().equals(customerId)).findFirst().orElse(null);
 	}
 }

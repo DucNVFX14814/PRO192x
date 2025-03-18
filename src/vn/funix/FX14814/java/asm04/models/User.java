@@ -1,9 +1,13 @@
 package vn.funix.FX14814.java.asm04.models;
 
+import java.io.Serializable;
+
 import vn.funix.FX14814.java.asm04.exception.CustomerIdNotValidException;
 
 //Class User - Quản lý thông tin người dùng
-public abstract class User {
+public abstract class User implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	protected String name;
 	protected String customerId;
 
@@ -12,7 +16,7 @@ public abstract class User {
 		this.customerId = "";
 	}
 
-	public User(String name, String customerId) {
+	public User(String customerId, String name) {
 		checkValidCCCD(customerId);
 
 		this.name = name;

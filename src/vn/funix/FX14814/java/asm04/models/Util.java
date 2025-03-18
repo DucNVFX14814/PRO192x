@@ -104,7 +104,7 @@ public class Util {
 	}
 
 	public static String getDivider() {
-		return "+-------------------------------------------------------------+";
+		return "+------------------------------+------------------------------+";
 	}
 
 	public static String formatAmount(double amount) {
